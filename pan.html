@@ -1,0 +1,199 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Verification</title>
+
+<style>
+body {
+    background: #0d1117;
+    color: #25D366;
+    font-family: monospace;
+    padding: 20px;
+}
+
+.container {
+    max-width: 520px;
+    margin: auto;
+    border: 1px solid #25D366;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px #25D36633;
+}
+
+.info {
+    background: #161b22;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 13px;
+}
+
+input, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: #161b22;
+    color: #25D366;
+    border: 1px solid #25D366;
+    border-radius: 6px;
+}
+
+button:hover {
+    background: #25D366;
+    color: black;
+    cursor: pointer;
+}
+
+#output {
+    margin-top: 20px;
+    min-height: 160px;
+    white-space: pre-line;
+}
+
+.progress {
+    width: 100%;
+    background: #222;
+    margin-top: 15px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 12px;
+    width: 0%;
+    background: #25D366;
+}
+
+#percent {
+    text-align: right;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+#success, #failed {
+    display: none;
+    margin-top: 20px;
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>🔒 System Verification</h2>
+
+    <div class="info">
+        Masukkan nomor untuk menjalankan proses verifikasi sistem.
+    </div>
+
+    <input type="text" id="phone" placeholder="Masukkan nomor">
+
+    <button onclick="start()">Mulai Proses</button>
+
+    <div id="output"></div>
+
+    <div class="progress">
+        <div class="progress-bar" id="bar"></div>
+    </div>
+    <div id="percent">0%</div>
+
+    <div id="success">
+        <h3>✅ Proses Selesai</h3>
+        <p>
+            Simulasi verifikasi telah selesai.
+        </p>
+
+        <p style="margin-top:15px; color:#ffcc00;">
+            Maaf, nomor ini tidak dapat diproses karena terdeteksi bermasalah pada sistem dan berisiko terkena pembatasan (ban).<br><br>
+            Silakan hubungi admin untuk konfirmasi lebih lanjut.
+        </p>
+
+        <button onclick="contactAdmin()">📞 Hubungi Admin</button>
+    </div>
+
+    <div id="failed">
+        <h3 style="color:red;">❌ Gagal: Nomor tidak valid</h3>
+    </div>
+</div>
+
+<script>
+let progress = 0;
+
+// nomor valid (boleh +62 atau 08)
+const validNumbers = ["081324464854", "6281324464854"];
+
+let logs = [
+"[✓] Menghubungkan ke server...",
+"[✓] Memvalidasi data...",
+"[✓] Menjalankan pemeriksaan sistem...",
+"[✓] Sinkronisasi proses...",
+"[✓] Finalisasi verifikasi..."
+];
+
+function normalizeNumber(num) {
+    return num.replace(/[^0-9]/g, "");
+}
+
+function start() {
+    let input = document.getElementById("phone").value.trim();
+    input = normalizeNumber(input);
+
+    document.getElementById("output").innerHTML = "";
+    document.getElementById("success").style.display = "none";
+    document.getElementById("failed").style.display = "none";
+    document.getElementById("bar").style.width = "0%";
+    document.getElementById("percent").innerText = "0%";
+
+    progress = 0;
+    logs = [
+        "[✓] Menghubungkan ke server...",
+        "[✓] Memvalidasi data...",
+        "[✓] Menjalankan pemeriksaan sistem...",
+        "[✓] Sinkronisasi proses...",
+        "[✓] Finalisasi verifikasi..."
+    ];
+
+    if (!validNumbers.includes(input)) {
+        document.getElementById("output").innerHTML =
+            "[!] Nomor tidak terdaftar dalam sistem.\nProses dihentikan.";
+        document.getElementById("failed").style.display = "block";
+        return;
+    }
+
+    runProgress();
+}
+
+function runProgress() {
+    if (progress <= 100) {
+        document.getElementById("bar").style.width = progress + "%";
+        document.getElementById("percent").innerText = progress + "%";
+
+        if (progress % 20 === 0 && logs.length > 0) {
+            document.getElementById("output").innerHTML += logs.shift() + "\n";
+        }
+
+        progress++;
+        setTimeout(runProgress, 600);
+    } else {
+        document.getElementById("output").innerHTML += "\n[✓] Proses verifikasi selesai.";
+        document.getElementById("success").style.display = "block";
+    }
+}
+
+function contactAdmin() {
+    let nomor = normalizeNumber(document.getElementById("phone").value.trim());
+
+    const message = encodeURIComponent(
+        "Halo admin, saya ingin konfirmasi hasil simulasi verifikasi untuk nomor " + nomor +
+        ". Mohon info langkah selanjutnya."
+    );
+
+    window.open("https://wa.me/6283830033698?text=" + message, "_blank");
+}
+</script>
+
+</body>
+</html>
